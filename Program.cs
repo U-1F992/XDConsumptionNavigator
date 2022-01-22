@@ -53,7 +53,7 @@ public class Program : ConsoleAppBase
             {
                 if (list.Count == 0)
                 {
-                    Console.WriteLine("No way to reach {0} from {1} before loading.", Convert.ToString(targetSeed, 16), Convert.ToString(currentSeed, 16));
+                    Console.Error.Write("No way to reach {0} from {1} before loading.", Convert.ToString(targetSeed, 16), Convert.ToString(currentSeed, 16));
                     return;
                 }
                 list.RemoveAt(list.Count - 1);
@@ -73,7 +73,7 @@ public class Program : ConsoleAppBase
             {
                 if (list.Count == 0)
                 {
-                    Console.WriteLine("No way to reach {0} from {1}", Convert.ToString(targetSeed, 16), Convert.ToString(currentSeed, 16));
+                    Console.Error.Write("No way to reach {0} from {1}", Convert.ToString(targetSeed, 16), Convert.ToString(currentSeed, 16));
                     return;
                 }
                 list.RemoveAt(list.Count - 1);
@@ -123,14 +123,19 @@ public class Program : ConsoleAppBase
             count.watchSteps = leftover / 2;
         }
 
+        Console.Write("{");
         PrintCount(count);
-        if (consumptionForced != 0) Console.WriteLine("Consumption forced: {0}", consumptionForced);
 
         if (listing)
         {
-            if (list.Count != 0) Console.WriteLine();
-            PrintListOfParties(list);
+            if (list.Count != 0)
+            {
+                Console.Write(",\"list\":[");
+                PrintListOfParties(list);
+                Console.Write("]");
+            }
         }
+        Console.Write("}\n");
 
 #if DEBUG
         for (int i = 0; i < count.generateParties; i++) currentSeed = XDDatabase.Generate(currentSeed).seed;
@@ -142,28 +147,28 @@ public class Program : ConsoleAppBase
 
     private void PrintCount((long generateParties, long changeSetting, long writeReport, long openBag, long watchSteps) count)
     {
-        if (count.generateParties != 0) Console.WriteLine("Generate parties: {0}", count.generateParties);
-        if (count.changeSetting != 0) Console.WriteLine("Change the setting: {0}", count.changeSetting);
-        if (count.writeReport != 0) Console.WriteLine("Write a report: {0}", count.writeReport);
-        if (count.openBag != 0) Console.WriteLine("Open the bag: {0}", count.openBag);
-        if (count.watchSteps != 0) Console.WriteLine("Watch steps: {0}", count.watchSteps);
+        Console.Write("\"generateParties\":{0},", count.generateParties);
+        Console.Write("\"changeSetting\":{0},", count.changeSetting);
+        Console.Write("\"writeReport\":{0},", count.writeReport);
+        Console.Write("\"openBag\":{0},", count.openBag);
+        Console.Write("\"watchSteps\":{0}", count.watchSteps);
     }
     private void PrintListOfParties(List<(uint pIndex, uint eIndex, uint HP, uint seed)> list)
     {
         for (long i = 0; i < list.Count; i++)
         {
             var item = list[(int)i];
-            Console.WriteLine(
-                "{{\"index\":{0},\"seed\":{1},\"data\":{2}}}",
+            Console.Write(
+                "{{\"index\":{0},\"seed\":{1},\"data\":{2}}}" + (i != list.Count - 1 ? "," : ""),
                 i + 1,
                 item.seed,
                 ("{\"party\":["+item.pIndex+","+item.eIndex+"],\"hp\":["
+                // https://github.com/yatsuna827/XDDatabase/blob/c649b77010ab81117057f2a02cc902931b663efc/XDDatabase/Program.cs#L137-L152
                 +((new int[] {322, 310, 210, 320, 310})[item.pIndex] + ((item.HP & 0x0000ff00) >> 8))+","
                 +((new int[] {340, 290, 620, 230, 310})[item.pIndex] + ((item.HP & 0x000000ff)))+","
                 +((new int[] {290, 290, 290, 320, 270})[item.eIndex] + ((item.HP & 0xff000000) >> 24))+","
                 +((new int[] {310, 270, 250, 270, 230})[item.eIndex] + ((item.HP & 0x00ff0000) >> 16))
                 +"]}")
-                // https://github.com/yatsuna827/XDDatabase/blob/c649b77010ab81117057f2a02cc902931b663efc/XDDatabase/Program.cs#L137-L144
             );
         }
     }
