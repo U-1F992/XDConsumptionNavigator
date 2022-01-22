@@ -157,7 +157,7 @@ public class Program : ConsoleAppBase
                 "{{\"index\":{0},\"seed\":{1},\"data\":{2}}}",
                 i + 1,
                 item.seed,
-                ("{\"party\":["+item.pIndex+","+item.eIndex+"],hp:["
+                ("{\"party\":["+item.pIndex+","+item.eIndex+"],\"hp\":["
                 +((new int[] {322, 310, 210, 320, 310})[item.pIndex] + ((item.HP & 0x0000ff00) >> 8))+","
                 +((new int[] {340, 290, 620, 230, 310})[item.pIndex] + ((item.HP & 0x000000ff)))+","
                 +((new int[] {290, 290, 290, 320, 270})[item.eIndex] + ((item.HP & 0xff000000) >> 24))+","
