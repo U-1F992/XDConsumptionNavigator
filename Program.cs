@@ -154,12 +154,16 @@ public class Program : ConsoleAppBase
         {
             var item = list[(int)i];
             Console.WriteLine(
-                "{0}, {1}, {2}, {3}, {4}",
+                "{{\"index\":{0},\"seed\":{1},\"data\":{2}}}",
                 i + 1,
-                Convert.ToString(item.seed, 16),
-                (new string[] {"ミュウツー", "ミュウ", "デオキシス", "レックウザ", "ジラーチ"})[item.pIndex],
-                (new int[] {322, 310, 210, 320, 310})[item.pIndex] + ((item.HP & 0x0000ff00) >> 8), // https://github.com/yatsuna827/XDDatabase/blob/c649b77010ab81117057f2a02cc902931b663efc/XDDatabase/Program.cs#L137-L144
-                (new string[] {"フリーザー", "サンダー", "ファイヤー", "ガルーラ", "ラティアス"})[item.eIndex]
+                item.seed,
+                ("{\"party\":["+item.pIndex+","+item.eIndex+"],hp:["
+                +((new int[] {322, 310, 210, 320, 310})[item.pIndex] + ((item.HP & 0x0000ff00) >> 8))+","
+                +((new int[] {340, 290, 620, 230, 310})[item.pIndex] + ((item.HP & 0x000000ff)))+","
+                +((new int[] {290, 290, 290, 320, 270})[item.eIndex] + ((item.HP & 0xff000000) >> 24))+","
+                +((new int[] {310, 270, 250, 270, 230})[item.eIndex] + ((item.HP & 0x00ff0000) >> 16))
+                +"]}")
+                // https://github.com/yatsuna827/XDDatabase/blob/c649b77010ab81117057f2a02cc902931b663efc/XDDatabase/Program.cs#L137-L144
             );
         }
     }
